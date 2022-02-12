@@ -2,16 +2,19 @@ from pydoc import doc
 from time import sleep
 import docker
 import requests
+import os
 import json
 client = docker.from_env()
+
 def start(container):
     container = client.containers.start(container)
-def create_cont(reqs,pyver):
-    container = client.containers.run('panzerox123/tiffin_contain', detach = True, ports = {'3000/tcp':3000, '8080/tcp':8080})
+def create_cont(reqs,pyver,contName):
+    container = client.containers.run('panzerox123/tiffin_contain',volumes={}, detach = True, ports = {'3000/tcp':3000, '8080/tcp':8080})
     sleep(10)
     URL = "http://localhost:8080/pyinstall/"+pyver
     r = requests.get(url = URL)
-    new = {container.short_id: reqs}
+    print(r)
+    new = {container.short_id: {"requirements":reqs, "name":contName}}
     with open("index.json", "r+") as file:
         data = json.load(file)
         data.update(new)

@@ -40,7 +40,7 @@ const Home = () => {
     ) => {
         const formData = new FormData();
         formData.append('file', fileData, fileData.name);
-        formData.append('ContainerName', contName);
+        formData.append('contName', contName);
         formData.append('pyversion', version);
 
         try {

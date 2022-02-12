@@ -1,5 +1,6 @@
 import json
 import os
+import funcs
 from flask import Flask, request,Response, jsonify
 from flask_cors import CORS,cross_origin
 app=Flask(__name__)
@@ -32,15 +33,17 @@ def createContainer():
         if file.filename=='':
             return jsonify({'message':'No file selected for uploading','status':404})
         if file:
-            if(os.path.isdir(os.path.join(request.files['contName']))):
-                pass
-            else:
+            if(not os.path.isdir(os.path.join(request.files['contName']))):
                 os.mkdir(os.path.join(request.files['contName']))
             file.save(os.path.join(request.files['contName'],file.filename))
+            funcs.create_cont(os.path.join(request.files['contName'],file.filename))
         else:
-            if(os.path.isdir(os.path.join(request.files['contName']))):
-                pass
-            else:
+            try:
+                if(os.path.isdir(os.path.join(request.files['contName']))):
+                    funcs.create_cont(os.path.join(request.files['contName'],file.filename),''.join(i.lower() for i in request.files['pyversion'] if not i.isspace()),request.file['contName'])
+                else:
+                    return jsonify({'message':'An Error has Occured','status':404})
+            except:
                 return jsonify({'message':'An Error has Occured','status':404})
         return 'Success'
 
