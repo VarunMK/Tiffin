@@ -11,18 +11,19 @@ parser.add_argument('--update', dest = 'update', type=str, help='Name of command
 parser.add_argument('--stop', dest = 'stop', type=str, help='Name of command')
 parser.add_argument('--destroy', dest = 'destroy', type=str, help='Name of command')
 parser.add_argument('--n', dest = 'n', type=str, help='Name of image')
-parser.add_argument('--p', dest = 'p', type=str, help='path of file')
+parser.add_argument('--p', dest = 'p', type=str, help='path to dockerfile')
 
 args = parser.parse_args()
 client = docker.from_env()
 
-def create(name, path="/src"):
-    
-    pass
 
-if(args.create):
-    pass
+if(args.createim):
+    container = client.container.run(args.createim, detach = True)
+elif(args.create):
+    image = client.images.build(path = args.p)
+    container = client.container.run(image[0], detach = True)
 elif(args.run):
+    #need to run from volume
     pass
 elif(args.update):
     pass
