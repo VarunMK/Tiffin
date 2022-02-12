@@ -33,8 +33,8 @@ app.get("/pip/:pkg", (req,res)=>{
 })
 
 app.get("/req", (req,res) => {
-    console.log("Installing reqs.");
-    let pip = child.exec("pip3 install -r requirements.txt");
+    console.log("Installing reqs");
+    let pip = child.exec(`pip3 install -r /home/workspace/dev/requirements.txt`);
     pip.stdout.on('data', (data)=>{
         console.log("req:", data);
     });

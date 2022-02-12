@@ -14,6 +14,7 @@ import {
     Tabs,
     Text,
     createStandaloneToast,
+    Link,
 } from '@chakra-ui/react';
 import axios from 'axios';
 
@@ -30,8 +31,9 @@ const Home = () => {
     const [contList, setContList] = useState<Array<string>>([]);
     const [contName, setContName] = useState<string>('');
     const [fileData, setFileData] = useState<File>();
+    const [accessCodeServer, setAccessCodeServer] = useState<boolean>(false);
     const [show, setShow] = useState<boolean>(false);
-    const toast=createStandaloneToast();
+    const toast = createStandaloneToast();
     const createContainer = async (
         fileData: File,
         version: string,
@@ -42,17 +44,21 @@ const Home = () => {
 
         try {
             const { data } = await axios.post(
-                'http://localhost:5000/createContainer?pyversion='+version + '&contName=' + contName,
+                'http://localhost:5000/createContainer?pyversion=' +
+                    version +
+                    '&contName=' +
+                    contName,
                 formData
             );
-            if(data==='success'){
+            if (data === 'success') {
                 toast({
                     title: 'Container Created Successfully',
-                    description:'Visit http://localhost:3001/ to check the codebase',
+                    description:
+                        'Visit http://localhost:3001/ to check the codebase',
                     status: 'success',
                     duration: 6000,
-                    isClosable:true
-                })
+                    isClosable: true,
+                });
             }
         } catch (err) {
             console.log(err);
@@ -165,32 +171,46 @@ const Home = () => {
                                         setFileData(e.target.files[0]);
                                     }}
                                 />
-                                <Button
-                                    mt="2"
-                                    _active={{
-                                        bg: '#008080',
-                                        color: 'white',
-                                    }}
-                                    onClick={() => {
-                                        if (fileData != undefined) {
-                                            createContainer(
-                                                fileData,
-                                                version,
-                                                contName
-                                            );
-                                        }
-                                    }}
-                                    size="lg"
-                                >
-                                    Create Container
-                                </Button>
+                                {!accessCodeServer ? (
+                                    <Button
+                                        mt="2"
+                                        _active={{
+                                            bg: '#008080',
+                                            color: 'white',
+                                        }}
+                                        onClick={() => {
+                                            if (fileData != undefined) {
+                                                createContainer(
+                                                    fileData,
+                                                    version,
+                                                    contName
+                                                );
+                                            }
+                                        }}
+                                        size="lg"
+                                    >
+                                        Create Container
+                                    </Button>
+                                ) : (
+                                    <a href="http://localhost:3001" target="_blank" >
+                                        <Button
+                                            mt="2"
+                                            width="100%"
+                                            _active={{
+                                                bg: '#008080',
+                                                color: 'white',
+                                            }}
+                                            size="lg"
+                                        >
+                                            Open Code
+                                        </Button>
+                                    </a>
+                                )}
                             </Flex>
                         </TabPanel>
                         <TabPanel>
                             <Flex direction="column">
-                                <Text mt="5">
-                                    Run An Existing Environment:
-                                </Text>
+                                <Text mt="5">Run An Existing Environment:</Text>
                                 <Select
                                     mt="5"
                                     w="90%"
