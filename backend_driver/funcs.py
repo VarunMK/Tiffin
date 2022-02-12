@@ -6,9 +6,9 @@ def start(container):
     container = client.container.start(container)
 def create_cont(image):
     container = client.container.run(image, detach = True)
-def create_new(dock_path, iname):
-    image = client.images.build(path = dock_path, tag = iname)
-    container = client.container.run(image[0], detach = True)
+def create_new(dock_path):
+    image = client.images.pull(dock_path)
+    container = client.container.run(image, detach = True)
 def run(volume):
     #need to run from volume
     pass
