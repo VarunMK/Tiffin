@@ -37,11 +37,12 @@ def createContainer():
             if(not os.path.isdir(os.path.join(curr_dir))):
                 os.mkdir(os.path.join(curr_dir))
             file.save(os.path.join(curr_dir,file.filename))
+            funcs.create_cont(''.join(i.lower() for i in request.args.get('pyversion') if not i.isspace()),request.args.get('contName'),os.path.join(os.getcwd(),app.config['PROJECT_FOLDER'],request.args.get('contName')))
             return 'success'
         else:
             try:
                 if(os.path.isdir(os.path.join(request.args.get('contName')))):
-                    funcs.create_cont(os.path.join(request.args.get('contName'),file.filename),''.join(i.lower() for i in request.args.get('pyversion') if not i.isspace()),request.args.get('contName'))
+                    funcs.create_cont(''.join(i.lower() for i in request.args.get('pyversion') if not i.isspace()),request.args.get('contName'),os.path.join(os.getcwd(),app.config['PROJECT_FOLDER'],request.args.get('contName')))
                 else:
                     return jsonify({'message':'An Error has Occured','status':404})
             except:
