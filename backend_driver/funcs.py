@@ -1,28 +1,25 @@
 from pydoc import doc
+from time import sleep
 import docker
 
 client = docker.from_env()
 def start(container):
-    container = client.container.start(container)
-def create_cont(image):
-    container = client.container.run(image, detach = True)
-def create_new(dock_path):
-    image = client.images.pull(dock_path)
-    container = client.container.run(image, detach = True)
+    container = client.containers.start(container)
+def create_cont(reqs, image,pyver):
+    container = client.containers.run(image, detach = False, ports = {'3000/tcp':3000, '8080/tcp':8080})
+    install(reqs, image, pyver)
 def run(volume):
     #need to run from volume
     pass
-def install(reqs, iname):
+def install(reqs, iname,pyver):
     f = open(reqs)
     lines = f.readlines()
-    deps = []
-    for line in lines:
-        if line[0] == '#':
-            continue
-        else:
-            deps.append( "pip install "+line.strip())
-    container = client.container.run(iname, detach = True, command = deps)
+    container = client.containers.run(iname, ports = {'3000/tcp':3000, '8080/tcp':8080})
+    sleep(5)
+    
 def stop(container):
-    container = client.container.stop(container)
+    container = client.containers.stop(container)
 def destroy(container):
     pass
+
+create_cont('reqs.txt', 'panzerox123/tiffin_contain', )
