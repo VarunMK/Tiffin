@@ -6,12 +6,12 @@ import json
 client = docker.from_env()
 def start(container):
     container = client.containers.start(container)
-def create_cont(reqs,pyver):
+def create_cont(reqs,pyver,name):
     container = client.containers.run('panzerox123/tiffin_contain', detach = True, ports = {'3000/tcp':3000, '8080/tcp':8080})
     sleep(10)
     URL = "http://localhost:8080/pyinstall/"+pyver
     r = requests.get(url = URL)
-    new = {container.short_id: reqs}
+    new = {container.short_id: {"requirements": reqs, "name": name}}
     with open("index.json", "r+") as file:
         data = json.load(file)
         data.update(new)
