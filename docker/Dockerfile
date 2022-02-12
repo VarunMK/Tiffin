@@ -1,7 +1,11 @@
-FROM node:17-slim
-# ports and volumes
-RUN mkdir -p /src/tfnrcv /src/dev
-COPY tiffin_recv/ /src/tfnrcv
-COPY entrypoint.sh /src
-WORKDIR /src/dev
-CMD ["sh", "/src/entrypoint.sh"]
+FROM gitpod/openvscode-server:latest
+USER root
+RUN apt-get install -y wget
+RUN wget https://deb.nodesource.com/setup_16.x
+RUN sh setup_16.x
+RUN apt-get install -y nodejs
+WORKDIR /src/
+COPY /tiffin_recv ./
+COPY entrypoint.sh ./
+USER openvscode-server
+ENTRYPOINT ["sh", "/src/entrypoint.sh"]
