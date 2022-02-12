@@ -14,7 +14,7 @@ app.get("/pyinstall/:ver", (req,res) => {
     });
     let ln = child.exec(`sudo ln -sf /usr/bin/python${req.params.ver} /usr/bin/python`);
     ln.stdout.on("data", (data)=>{
-        console.log("LN completed");
+        console.log("LN:", data);
     })
     res.status(200).send();
     /*
@@ -23,13 +23,22 @@ app.get("/pyinstall/:ver", (req,res) => {
     */
 })
 
-app.get("/pip", (req,res)=>{
+app.get("/pip/:pkg", (req,res)=>{
     console.log(`Pip Install`);
-
+    let pip = child.exec(`pip3 install ${req.params.pkg}`);
+    pip.stdout.on('data', (data)=>{
+        console.log("pip:", data);
+    });
+    res.status(200).send();
 })
 
 app.get("/req", (req,res) => {
-    console.log("Installing reqs.")
+    console.log("Installing reqs.");
+    let pip = child.exec("pip3 install -r requirements.txt");
+    pip.stdout.on('data', (data)=>{
+        console.log("req:", data);
+    });
+    res.status(200).send();
 })
 
 app.listen(8080, ()=>{
