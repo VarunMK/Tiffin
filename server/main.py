@@ -6,8 +6,8 @@ from flask_cors import CORS,cross_origin
 app=Flask(__name__)
 CORS(app)
 
-UPLOAD_PATH='./uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_PATH
+PROJECT_PATH=os.path.join('./projects')
+app.config['PROJECT_FOLDER'] = PROJECT_PATH
 @app.route('/')
 def health():
     return 'Server is running'
@@ -33,14 +33,15 @@ def createContainer():
         if file.filename=='':
             return jsonify({'message':'No file selected for uploading','status':404})
         if file:
-            if(not os.path.isdir(os.path.join(request.files['contName']))):
-                os.mkdir(os.path.join(request.files['contName']))
-            file.save(os.path.join(request.files['contName'],file.filename))
-            funcs.create_cont(os.path.join(request.files['contName'],file.filename))
+            curr_dir=os.path.join(app.config['PROJECT_FOLDER'],request.args.get('contName'))
+            if(not os.path.isdir(os.path.join(curr_dir))):
+                os.mkdir(os.path.join(curr_dir))
+            file.save(os.path.join(curr_dir,file.filename))
+            return 'success'
         else:
             try:
-                if(os.path.isdir(os.path.join(request.files['contName']))):
-                    funcs.create_cont(os.path.join(request.files['contName'],file.filename),''.join(i.lower() for i in request.files['pyversion'] if not i.isspace()),request.file['contName'])
+                if(os.path.isdir(os.path.join(request.args.get('contName')))):
+                    funcs.create_cont(os.path.join(request.args.get('contName'),file.filename),''.join(i.lower() for i in request.args.get('pyversion') if not i.isspace()),request.args.get('contName'))
                 else:
                     return jsonify({'message':'An Error has Occured','status':404})
             except:

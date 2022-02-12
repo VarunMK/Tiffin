@@ -40,12 +40,10 @@ const Home = () => {
     ) => {
         const formData = new FormData();
         formData.append('file', fileData, fileData.name);
-        formData.append('contName', contName);
-        formData.append('pyversion', version);
 
         try {
             const { data } = await axios.post(
-                'http://localhost:5000/createContainer',
+                'http://localhost:5000/createContainer?pyversion='+version + '&contName=' + contName,
                 formData
             );
             console.log(data);
