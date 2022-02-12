@@ -33,10 +33,12 @@ def createContainer():
         if file.filename=='':
             return jsonify({'message':'No file selected for uploading','status':404})
         if file:
-            if(not os.path.isdir(os.path.join(request.files['contName']))):
-                os.mkdir(os.path.join(request.files['contName']))
-            file.save(os.path.join(request.files['contName'],file.filename))
-            funcs.create_cont(os.path.join(request.files['contName'],file.filename))
+            print(request.fil)
+            #if(not os.path.isdir(os.path.join(request.files['contName']))):
+                #os.mkdir(os.path.join(request.files['contName']))
+            #file.save(os.path.join(request.files['contName'],file.filename))
+            #funcs.create_cont(os.path.join(request.files['contName'],file.filename))
+            return 'success'
         else:
             try:
                 if(os.path.isdir(os.path.join(request.files['contName']))):
