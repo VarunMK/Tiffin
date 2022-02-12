@@ -32,8 +32,16 @@ def createContainer():
         if file.filename=='':
             return jsonify({'message':'No file selected for uploading','status':404})
         if file:
-            print(os.path)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'],file.filename))
+            if(os.path.isdir(os.path.join(request.files['contName']))):
+                pass
+            else:
+                os.mkdir(os.path.join(request.files['contName']))
+            file.save(os.path.join(request.files['contName'],file.filename))
+        else:
+            if(os.path.isdir(os.path.join(request.files['contName']))):
+                pass
+            else:
+                return jsonify({'message':'An Error has Occured','status':404})
         return 'Success'
 
 def __init__(self):
