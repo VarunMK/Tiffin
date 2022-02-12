@@ -45,5 +45,5 @@ def destroy(contName):
     '''
     client.containers.prune({"id":"2d614fe634"})
 
-# create_cont("", "3.8", "TestContainer")
-destroy("TestContainer")
+create_cont("", "3.8", "TestContainer")
+# destroy("TestContainer")
