@@ -6,12 +6,13 @@ RUN sh setup_16.x
 RUN apt-get install -y nodejs
 RUN apt-get install software-properties-common -y
 RUN add-apt-repository ppa:deadsnakes/ppa -y
-WORKDIR /src/
-COPY /tiffin_recv ./
-COPY entrypoint.sh ./
 RUN ln -fs /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
 RUN apt-get install -y tzdata
 RUN dpkg-reconfigure --frontend noninteractive tzdata
+RUN apt-get install python3-pip python-pip -y
+WORKDIR /src/
+COPY /tiffin_recv ./
+COPY entrypoint.sh ./
 USER openvscode-server
 ENTRYPOINT ["sh", "/src/entrypoint.sh"]
 # ENTRYPOINT ["bash"]
