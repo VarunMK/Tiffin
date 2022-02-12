@@ -1,5 +1,4 @@
 import os
-import funcs.py
 
 while True:
     cmd = input(">")
