@@ -18,7 +18,7 @@ while True:
             elif(comm[2]=="run"):
                 #figure out how to run from volume
                 pass
-            elif(comm[2]=="update"):
+            elif(comm[2]=="install"):
                 pass
             elif(comm[2]=="stop"):
                 pass
