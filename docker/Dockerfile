@@ -9,3 +9,4 @@ COPY /tiffin_recv ./
 COPY entrypoint.sh ./
 USER openvscode-server
 ENTRYPOINT ["sh", "/src/entrypoint.sh"]
+EXPOSE 8080 3000
