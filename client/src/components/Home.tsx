@@ -13,7 +13,7 @@ import {
     TabPanels,
     Tabs,
     Text,
-    useToast,
+    createStandaloneToast,
 } from '@chakra-ui/react';
 import axios from 'axios';
 
@@ -31,8 +31,7 @@ const Home = () => {
     const [contName, setContName] = useState<string>('');
     const [fileData, setFileData] = useState<File>();
     const [show, setShow] = useState<boolean>(false);
-    const toast = useToast();
-
+    const toast=createStandaloneToast();
     const createContainer = async (
         fileData: File,
         version: string,
@@ -46,7 +45,15 @@ const Home = () => {
                 'http://localhost:5000/createContainer?pyversion='+version + '&contName=' + contName,
                 formData
             );
-            console.log(data);
+            if(data==='success'){
+                toast({
+                    title: 'Container Created Successfully',
+                    description:'Visit http://localhost:3001/ to check the codebase',
+                    status: 'success',
+                    duration: 6000,
+                    isClosable:true
+                })
+            }
         } catch (err) {
             console.log(err);
         }
