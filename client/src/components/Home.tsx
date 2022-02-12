@@ -30,6 +30,7 @@ const Home = () => {
     const [version, setVersion] = useState<string>('Python 3.6');
     const [contList, setContList] = useState<Array<string>>([]);
     const [contName, setContName] = useState<string>('');
+    const [isLoading,setisLoading]=useState<boolean>(false);
     const [fileData, setFileData] = useState<File>();
     const [accessCodeServer, setAccessCodeServer] = useState<boolean>(false);
     const [show, setShow] = useState<boolean>(false);
@@ -51,6 +52,8 @@ const Home = () => {
                 formData
             );
             if (data === 'success') {
+                setAccessCodeServer(true);
+                setisLoading(false);
                 toast({
                     title: 'Container Created Successfully',
                     description:
@@ -178,8 +181,10 @@ const Home = () => {
                                             bg: '#008080',
                                             color: 'white',
                                         }}
+                                        isLoading={isLoading}
                                         onClick={() => {
                                             if (fileData != undefined) {
+                                                setisLoading(true);
                                                 createContainer(
                                                     fileData,
                                                     version,
