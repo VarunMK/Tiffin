@@ -28,13 +28,15 @@ const versionList = [
 
 const Home = () => {
     const [version, setVersion] = useState<string>('Python 3.6');
-    const [contList, setContList] = useState<Array<string>>([]);
+    // const [contList, setContList] = useState<Array<string>>([]);
     const [contName, setContName] = useState<string>('');
-    const [isLoading,setisLoading]=useState<boolean>(false);
+    const [isLoading, setisLoading] = useState<boolean>(false);
+    const [isLoadingStop,setisLoadingStop]=useState<boolean>(false);
     const [fileData, setFileData] = useState<File>();
     const [accessCodeServer, setAccessCodeServer] = useState<boolean>(false);
     const [show, setShow] = useState<boolean>(false);
     const toast = createStandaloneToast();
+    const [conList, setConList] = useState<Array<string>>([]);
     const createContainer = async (
         fileData: File,
         version: string,
@@ -51,7 +53,7 @@ const Home = () => {
                     contName,
                 formData
             );
-            if (data === 'success') {
+            if (data.status == '200') {
                 setAccessCodeServer(true);
                 setisLoading(false);
                 toast({
@@ -67,7 +69,69 @@ const Home = () => {
             console.log(err);
         }
     };
-    console.log(version);
+    const getContList = async () => {
+        setAccessCodeServer(false);
+        setisLoading(false);
+        try {
+            const { data } = await axios.get(
+                'http://localhost:5000/getContainerList'
+            );
+            console.log(data);
+            var l = [];
+            for (var k in data) {
+                l.push(k);
+            }
+            setConList(l);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+    const loadExistingContainer = async (contName: string) => {
+        try {
+            const { data } = await axios.post(
+                'http://localhost:5000/loadContainer',
+                contName
+            );
+            if (data.status == '200') {
+                setAccessCodeServer(true);
+                setisLoading(false);
+                toast({
+                    title: 'Container Loaded Successfully',
+                    description:
+                        'Visit http://localhost:3001/ to check the codebase',
+                    status: 'success',
+                    duration: 6000,
+                    isClosable: true,
+                });
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const stopContainer = async (contName: string) => {
+        setisLoadingStop(true);
+        try {
+            const { data } = await axios.post(
+                'http://localhost:5000/stopContainer',
+                contName
+            );
+            if (data.status == '200') {
+                setisLoadingStop(false);
+                toast({
+                    title: 'Container Stopped Successfully',
+                    description:
+                        'Visit http://localhost:3001/ to check the codebase',
+                    status: 'success',
+                    duration: 6000,
+                    isClosable: true,
+                });
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
     return (
         <Box margin="0 auto">
             <Box backgroundColor="black" py="3" textAlign="center">
@@ -94,6 +158,10 @@ const Home = () => {
                                 flexDirection="column"
                                 onClick={() => {
                                     setShow(true);
+                                    if (contName.length > 0) {
+                                        setAccessCodeServer(false);
+                                        setisLoading(false);
+                                    }
                                 }}
                                 _hover={{ cursor: 'pointer' }}
                                 marginRight="5"
@@ -109,6 +177,11 @@ const Home = () => {
                                 fontWeight={show ? 'light' : 'extrabold'}
                                 onClick={() => {
                                     setShow(false);
+                                    getContList();
+                                    if (contName.length > 0) {
+                                        setAccessCodeServer(false);
+                                        setisLoading(false);
+                                    }
                                 }}
                                 _hover={{ cursor: 'pointer' }}
                             >
@@ -197,19 +270,37 @@ const Home = () => {
                                         Create Container
                                     </Button>
                                 ) : (
-                                    <a href="http://localhost:3001" target="_blank" >
+                                    <>
+                                        <a
+                                            href="http://localhost:3001"
+                                            target="_blank"
+                                        >
+                                            <Button
+                                                mt="2"
+                                                width="100%"
+                                                _active={{
+                                                    bg: '#008080',
+                                                    color: 'white',
+                                                }}
+                                                size="lg"
+                                            >
+                                                Open Code
+                                            </Button>
+                                        </a>
                                         <Button
-                                            mt="2"
+                                            mt="4"
                                             width="100%"
                                             _active={{
-                                                bg: '#008080',
+                                                bg: 'orange',
                                                 color: 'white',
                                             }}
                                             size="lg"
+                                            isLoading={isLoadingStop}
+                                            onClick={(e)=>{stopContainer(contName)}}
                                         >
-                                            Open Code
+                                            Stop Container
                                         </Button>
-                                    </a>
+                                    </>
                                 )}
                             </Flex>
                         </TabPanel>
@@ -224,7 +315,7 @@ const Home = () => {
                                     boxShadow="inset -3px -3px 2px #FFFFFF, inset 2px 2px 8px rgba(0, 0, 0, 0.08);"
                                     borderRadius="md"
                                     onChange={(e) => {
-                                        setVersion(e.target.value);
+                                        setContName(e.target.value);
                                     }}
                                     _focus={{
                                         border: '#008080 solid 2px',
@@ -237,33 +328,61 @@ const Home = () => {
                                     >
                                         Select Environment
                                     </option>
-                                    {contList.map((value) => {
+                                    {conList.map((value, i) => {
                                         return (
-                                            <option key={value} value={value}>
+                                            <option key={i} value={value}>
                                                 {value}
                                             </option>
                                         );
                                     })}
                                 </Select>
-                                <Button
-                                    mt="5"
-                                    _active={{
-                                        bg: '#008080',
-                                        color: 'white',
-                                    }}
-                                    onClick={() => {
-                                        if (fileData != undefined) {
-                                            createContainer(
-                                                fileData,
-                                                version,
-                                                contName
-                                            );
-                                        }
-                                    }}
-                                    size="lg"
-                                >
-                                    Create Environment
-                                </Button>
+                                {!accessCodeServer ? (
+                                    <Button
+                                        mt="5"
+                                        _active={{
+                                            bg: '#008080',
+                                            color: 'white',
+                                        }}
+                                        onClick={() => {
+                                            loadExistingContainer(contName);
+                                        }}
+                                        size="lg"
+                                    >
+                                        Create Environment
+                                    </Button>
+                                ) : (
+                                    <>
+                                        <a
+                                            href="http://localhost:3001"
+                                            target="_blank"
+                                        >
+                                            <Button
+                                                mt="5"
+                                                width="100%"
+                                                _active={{
+                                                    bg: '#008080',
+                                                    color: 'white',
+                                                }}
+                                                size="lg"
+                                            >
+                                                Open Code
+                                            </Button>
+                                        </a>
+                                        <Button
+                                            mt="4"
+                                            width="100%"
+                                            _active={{
+                                                bg: 'orange',
+                                                color: 'white',
+                                            }}
+                                            isLoading={isLoadingStop}
+                                            onClick={()=>{stopContainer(contName)}}
+                                            size="lg"
+                                        >
+                                            Stop Container
+                                        </Button>
+                                    </>
+                                )}
                             </Flex>
                         </TabPanel>
                     </TabPanels>
