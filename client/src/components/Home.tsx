@@ -31,7 +31,7 @@ const Home = () => {
     // const [contList, setContList] = useState<Array<string>>([]);
     const [contName, setContName] = useState<string>('');
     const [isLoading, setisLoading] = useState<boolean>(false);
-    const [isLoadingStop,setisLoadingStop]=useState<boolean>(false);
+    const [isLoadingStop, setisLoadingStop] = useState<boolean>(false);
     const [fileData, setFileData] = useState<File>();
     const [accessCodeServer, setAccessCodeServer] = useState<boolean>(false);
     const [show, setShow] = useState<boolean>(false);
@@ -64,9 +64,23 @@ const Home = () => {
                     duration: 6000,
                     isClosable: true,
                 });
+            } else {
+                toast({
+                    title: 'Errors Detected',
+                    description: 'Try Again',
+                    status: 'error',
+                    duration: 6000,
+                    isClosable: true,
+                });
             }
         } catch (err) {
-            console.log(err);
+            toast({
+                title: { err },
+                description: 'Try Again',
+                status: 'error',
+                duration: 6000,
+                isClosable: true,
+            });
         }
     };
     const getContList = async () => {
@@ -83,7 +97,13 @@ const Home = () => {
             }
             setConList(l);
         } catch (err) {
-            console.log(err);
+            toast({
+                title: { err },
+                description: 'Try Again',
+                status: 'error',
+                duration: 6000,
+                isClosable: true,
+            });
         }
     };
     const loadExistingContainer = async (contName: string) => {
@@ -105,7 +125,13 @@ const Home = () => {
                 });
             }
         } catch (err) {
-            console.log(err);
+            toast({
+                title: { err },
+                description: 'Try Again',
+                status: 'error',
+                duration: 6000,
+                isClosable: true,
+            });
         }
     };
 
@@ -118,6 +144,7 @@ const Home = () => {
             );
             if (data.status == '200') {
                 setisLoadingStop(false);
+                setAccessCodeServer(false);
                 toast({
                     title: 'Container Stopped Successfully',
                     description:
@@ -126,9 +153,23 @@ const Home = () => {
                     duration: 6000,
                     isClosable: true,
                 });
+            } else {
+                toast({
+                    title: 'Errors Detected',
+                    description: 'Try Again',
+                    status: 'error',
+                    duration: 6000,
+                    isClosable: true,
+                });
             }
         } catch (err) {
-            console.log(err);
+            toast({
+                title: { err },
+                description: 'Try Again',
+                status: 'error',
+                duration: 6000,
+                isClosable: true,
+            });
         }
     };
 
@@ -296,7 +337,9 @@ const Home = () => {
                                             }}
                                             size="lg"
                                             isLoading={isLoadingStop}
-                                            onClick={(e)=>{stopContainer(contName)}}
+                                            onClick={(e) => {
+                                                stopContainer(contName);
+                                            }}
                                         >
                                             Stop Container
                                         </Button>
@@ -343,7 +386,9 @@ const Home = () => {
                                             bg: '#008080',
                                             color: 'white',
                                         }}
+                                        isLoading={isLoading}
                                         onClick={() => {
+                                            setisLoading(true);
                                             loadExistingContainer(contName);
                                         }}
                                         size="lg"
@@ -376,7 +421,9 @@ const Home = () => {
                                                 color: 'white',
                                             }}
                                             isLoading={isLoadingStop}
-                                            onClick={()=>{stopContainer(contName)}}
+                                            onClick={() => {
+                                                stopContainer(contName);
+                                            }}
                                             size="lg"
                                         >
                                             Stop Container

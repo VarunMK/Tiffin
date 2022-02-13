@@ -38,16 +38,35 @@ def createContainer():
                 os.mkdir(os.path.join(curr_dir))
             file.save(os.path.join(curr_dir,file.filename))
             funcs.create_cont(''.join(i.lower() for i in request.args.get('pyversion') if not i.isspace()),request.args.get('contName'),os.path.join(os.getcwd(),app.config['PROJECT_FOLDER'],request.args.get('contName')))
-            return 'success'
+            return jsonify({'message':'Success','status':200})
         else:
-            try:
-                if(os.path.isdir(os.path.join(request.args.get('contName')))):
-                    funcs.create_cont(''.join(i.lower() for i in request.args.get('pyversion') if not i.isspace()),request.args.get('contName'),os.path.join(os.getcwd(),app.config['PROJECT_FOLDER'],request.args.get('contName')))
-                else:
-                    return jsonify({'message':'An Error has Occured','status':404})
-            except:
-                return jsonify({'message':'An Error has Occured','status':404})
-        return 'Success'
+            return jsonify({'message':'An Error has Occured','status':404})
+
+@app.route('/getContainerList',methods=['GET'])
+@cross_origin()
+def getContainerList():
+    if(request.method=='GET'):
+        ind=open('index.json','r+')
+        data=json.load(ind)
+        return data
+
+@app.route('/loadContainer',methods=['POST'])
+@cross_origin()
+def loadContainer():
+    try:
+        funcs.start(request.get_data().decode('utf-8'))
+        return jsonify({'message':'Success','status':200})
+    except:
+        return jsonify({'message':'An Error has Occured','status':404})
+
+@app.route('/stopContainer',methods=['POST'])
+@cross_origin()
+def stopContainer():
+    try:
+        funcs.stop(request.get_data().decode('utf-8'))
+        return jsonify({'message':'Success','status':200})
+    except:
+        return jsonify({'message':'An Error has Occured','status':404})
 
 def __init__(self):
     app.run(debug=True)
