@@ -13,7 +13,7 @@ app.get("/pyinstall/:ver", (req, res) => {
         console.log(`APT: ${data}`);
     });
     apt.on('exit', () => {
-        let pip = child.exec(`python3.8 -m pip install pip`)
+        let pip = child.exec(`python${req.params.ver} -m pip install pip`)
         pip.on('exit', () => {
             let ln = child.exec(`sudo ln -sf /usr/bin/python${req.params.ver} /usr/bin/python`);
             ln.stdout.on("data", (data) => {
