@@ -8,17 +8,22 @@ import json
 client = docker.from_env()
 
 def start(contName):
+    print("✨Starting environment", contName)
     with open("index.json", "r") as file:
         data = json.load(file)
         id = data[contName]["id"]
     container = client.containers.get(id)
     container.start()
+    print("✅Done!")
 
 def create_cont(pyver,contName,workdir):
+    print("✨Creating Environment", contName)
     container = client.containers.run('panzerox123/tiffin_contain',volumes={workdir:{"bind": '/home/workspace/dev', 'mode': 'rw'}}, detach = True, ports = {'3000/tcp':3001, '8080/tcp':8080})
     sleep(10)
+    print("✨Installing Python", pyver)
     pyinstall_url = "http://localhost:8080/pyinstall/"+pyver[6:]
     pyinstall_r = requests.get(url = pyinstall_url)
+    print("✨Installing Requirements")
     reqinstall_url = "http://localhost:8080/req"
     reqinstall_r = requests.get(url = reqinstall_url)
     new = {contName: {"python_version": pyver, "id": container.short_id, "path":workdir}}
@@ -27,13 +32,16 @@ def create_cont(pyver,contName,workdir):
         data.update(new)
         file.seek(0)
         json.dump(data, file)
+    print("✅Done!")
 
 def stop(contName):
+    print("👋Stopping Environment")
     with open("index.json", "r") as file:
         data = json.load(file)
         id = data[contName]["id"]
     container = client.containers.get(id)
     container.stop()
+    print("✅Done!")
 
 # def destroy(contName):
 #     '''
@@ -46,5 +54,5 @@ def stop(contName):
 #     '''
 #     client.containers.prune({"id":"2d614fe634"})
 
-# create_cont("", "3.8", "TestContainer")
+#create_cont("python3.7", "testContain", os.getcwd())
 # destroy("TestContainer")
