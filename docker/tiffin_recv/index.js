@@ -41,7 +41,8 @@ app.get("/pyinstall/:ver", (req, res) => {
 
 app.get("/pip/:pkg", (req, res) => {
     console.log(`Pip Install`);
-    let pip = child.exec(`pip install ${req.params.pkg}`);
+    //let pip = child.exec(`pip install ${req.params.pkg}`);
+    let pip = child.exec(`tiffin install ${req.params.pkg}`);
     pip.stdout.on('data', (data) => {
         console.log("pip:", data);
     });

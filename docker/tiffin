@@ -1,0 +1,11 @@
+#!/bin/sh
+
+case $1 in
+    install)
+        pip install $2
+        echo $2 >> /home/workspace/dev/requirements.txt
+    ;;
+    req)
+        pip install -r $2
+    ;;
+esac
